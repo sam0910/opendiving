@@ -80,7 +80,9 @@ Never close, restart or interrupt a pane unless the user asks, and never send in
   Otherwise tell the pane to leave its changes uncommitted.
 - Use the running dev stack; don't start a second API or `next dev`. Ask the main session (via the report)
   if a restart is needed, and restart with `./run.sh restart`.
-- `next dev` rewrites `opendiving-web/AGENTS.md` on every start: `git checkout AGENTS.md` before committing.
+- `next dev` rewrites the managed `nextjs-agent-rules` block at the bottom of `opendiving-web/AGENTS.md`
+  when a Next.js upgrade changes it. If `AGENTS.md` shows modified after a dev-server start, commit that
+  rewrite with the work, as the block itself says, rather than reverting it.
 - Web needs Node 24 (`.nvmrc`), but a new shell gets the system Node 20, where vitest won't start. Switch
   with nvm in the same command, since each command starts a fresh shell:
   `source ~/.nvm/nvm.sh && nvm use >/dev/null && <npm/pnpm/npx command>`.
