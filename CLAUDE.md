@@ -29,6 +29,25 @@ A task that spans both apps is split per repo. When the API contract changes, se
 then give the web pane the resulting contract (endpoints, schemas, status codes) from the API's report.
 Independent halves can run in both panes at once.
 
+## Which pane gets it
+
+**`api`: `opendiving-api`, FastAPI + SQLAlchemy + Postgres + Redis, in Docker Compose.** Data and the
+`/api/v1` contract: endpoints (`src/app/api/v1/`), business logic (`services/`), models, schemas and Alembic
+migrations, the arq worker and background jobs (`core/worker/`), auth, email, the admin panel, logbook and
+dive-computer import, export, backfill scripts (`src/scripts/`). Tests: pytest and mypy.
+
+**`web`: `opendiving-web`, Next.js + TypeScript.** What the user sees: pages (`src/app/`), components
+(`src/components/`), the API client (`src/lib/api/`), maps, the 3D seascape, charts, forms, styling, the CSP
+(`src/proxy.ts`), and checks in the browser. Also the map-tile renderer (`src/map-renderer/`): it lives here
+even though the API stores its tiles. Tests: vitest and Playwright.
+
+**Rule of thumb.** Wrong data in a response, a slow query, a failing job: `api`. Wrong layout or label, or a
+value shown wrong while the JSON is right: `web`. A new field shown in the UI: both, `api` first. Not sure:
+look at the JSON from `localhost:8000/api/v1/...` yourself first; if it is right, the bug is in `web`.
+
+**A new or renamed setting** also needs this repo: `example.env` and `docs/configuration.md` are what an
+install reads, so the pane's change alone reaches no install. Do that half yourself.
+
 ## The panes
 
 Two panes in this Rex session, labelled `api` and `web`, each running its own Claude Code session in its
