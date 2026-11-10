@@ -123,6 +123,8 @@ That rewrites `src/app/data/commons_dive_sites.geojson`, which git tracks. Don't
 
 ## Gotchas
 
-- `next dev` rewrites `opendiving-web/AGENTS.md` on every start. Run `git checkout AGENTS.md` before committing.
+- `next dev` rewrites the managed block at the bottom of `opendiving-web/AGENTS.md` when a Next.js upgrade
+  changes it. If `AGENTS.md` shows modified after starting the web app, commit that rewrite with your work
+  instead of reverting it; reverting only brings the change back on the next start.
 - Remotes: `origin` is your fork (`sam0910/*`) and `upstream` is `opendiving/*`. To bring in new work, run
   `git fetch upstream && git merge upstream/main`.
