@@ -10,13 +10,13 @@
 #   ./run.sh signin           print the latest magic link and code
 set -euo pipefail
 
-# The app repos sit next to this one.
-BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# The app repos are cloned inside this one, each its own git repo (git-ignored here).
+BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 API="$BASE/opendiving-api"
 WEB="$BASE/opendiving-web"
 # The web log lives here, outside opendiving-web: `next dev` watches its own folder,
 # and a log written inside it recompiles and reloads the page on every line, forever.
-WEB_LOG="$BASE/opendiving/.logs/web.log"
+WEB_LOG="$BASE/.logs/web.log"
 
 API_PATTERN="uvicorn app.main:app"
 WORKER_PATTERN="arq app.core.worker"
