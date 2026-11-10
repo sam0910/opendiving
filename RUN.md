@@ -1,10 +1,11 @@
 # Running OpenDiving locally (dev)
 
-The dev site runs straight on this Mac, without Docker. It is made of four checkouts that sit side by side:
+The dev site runs straight on this Mac, without Docker. It is made of four checkouts: this repo, with the three
+app repos cloned inside it. Each app repo is its own git repository, not a submodule, and this repo's `.gitignore`
+keeps them out of it:
 
 ```
-~/Code/00-CSMB/Software/
-├── opendiving           # this repo: install bundle + docs (nothing to run)
+~/Code/00-CSMB/Software/opendiving/   # this repo: install bundle + docs (nothing to run)
 ├── opendiving-api       # FastAPI + arq worker   → http://localhost:8000  (docs at /docs)
 ├── opendiving-web       # Next.js                → http://localhost:3000
 └── opendiving-commons   # dive-site pool, built into the API's bundle
@@ -16,7 +17,7 @@ The dev site runs straight on this Mac, without Docker. It is made of four check
 | Redis    | `brew services` (redis)      | brew                   |
 | API      | `opendiving-api/.venv`       | `opendiving-api/.logs/api.log`    |
 | Worker   | `opendiving-api/.venv`       | `opendiving-api/.logs/worker.log` |
-| Web      | Node 24 (nvm) + pnpm         | `opendiving/.logs/web.log`        |
+| Web      | Node 24 (nvm) + pnpm         | `.logs/web.log`                   |
 
 ## Quick: `run.sh`
 
@@ -35,7 +36,7 @@ The sections below are what it does, step by step.
 ## Start
 
 ```bash
-OD=~/Code/00-CSMB/Software
+OD=~/Code/00-CSMB/Software/opendiving
 
 # 1. Postgres + Redis (they also come back at login once started)
 brew services start postgresql@18
@@ -47,11 +48,11 @@ nohup ../.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload > 
 nohup ../.venv/bin/arq app.core.worker.settings.WorkerSettings > ../.logs/worker.log 2>&1 &
 
 # 3. Web
-cd $OD/opendiving-web && mkdir -p $OD/opendiving/.logs
+cd $OD/opendiving-web && mkdir -p $OD/.logs
 nvm use 24
 # The log goes outside opendiving-web: `next dev` watches its own folder, and a log
 # written inside it makes the page recompile and reload on every line.
-nohup pnpm dev > $OD/opendiving/.logs/web.log 2>&1 &
+nohup pnpm dev > $OD/.logs/web.log 2>&1 &
 ```
 
 Check it's up:
@@ -82,7 +83,7 @@ No mail server is set up, so the API **writes the magic link and the six-digit c
 sending an email:
 
 ```bash
-grep "magic link" ~/Code/00-CSMB/Software/opendiving-api/.logs/api.log | tail -1
+grep "magic link" ~/Code/00-CSMB/Software/opendiving/opendiving-api/.logs/api.log | tail -1
 ```
 
 Open the link, or type the code on the sign-in page. Both expire in 30 minutes. The first account to sign in is
@@ -100,7 +101,7 @@ that line from `.env` while you edit Commons data, and see [STACKS.md](STACKS.md
 After changing sites in `opendiving-commons`, rebuild the API's bundle, then restart the API:
 
 ```bash
-cd ~/Code/00-CSMB/Software/opendiving-api
+cd ~/Code/00-CSMB/Software/opendiving/opendiving-api
 ENVIRONMENT=local SECRET_KEY=x .venv/bin/python scripts/build_commons_bundle.py ../opendiving-commons
 ```
 

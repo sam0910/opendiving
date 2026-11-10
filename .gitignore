@@ -3,3 +3,8 @@
 .env
 caddy_data/
 __pycache__/
+
+# The app repos are cloned inside this checkout, each its own repository (not submodules).
+/opendiving-api/
+/opendiving-web/
+/opendiving-commons/
