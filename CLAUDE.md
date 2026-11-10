@@ -29,12 +29,18 @@ A task that spans both apps is split per repo. When the API contract changes, se
 then give the web pane the resulting contract (endpoints, schemas, status codes) from the API's report.
 Independent halves can run in both panes at once.
 
+**Ship the first half before delegating the half that depends on it.** Before sending the web half, check
+the API half (`git -C opendiving-api status -sb`). If it is uncommitted, or sits on a branch that isn't its
+own, stop and tell the user to commit and ship it first: its own branch off `main`, PR merged. Only then
+delegate the web half. Otherwise the web change, which often deletes the old code path, can land ahead of
+the API it now depends on.
+
 ## Which pane gets it
 
-**`api`: `opendiving-api`, FastAPI + SQLAlchemy + Postgres + Redis, in Docker Compose.** Data and the
-`/api/v1` contract: endpoints (`src/app/api/v1/`), business logic (`services/`), models, schemas and Alembic
-migrations, the arq worker and background jobs (`core/worker/`), auth, email, the admin panel, logbook and
-dive-computer import, export, backfill scripts (`src/scripts/`). Tests: pytest and mypy.
+**`api`: `opendiving-api`, FastAPI + SQLAlchemy + Postgres + Redis, run by `./run.sh` without Docker.**
+Data and the `/api/v1` contract: endpoints (`src/app/api/v1/`), business logic (`services/`), models,
+schemas and Alembic migrations, the arq worker and background jobs (`core/worker/`), auth, email, the admin
+panel, logbook and dive-computer import, export, backfill scripts (`src/scripts/`). Tests: pytest and mypy.
 
 **`web`: `opendiving-web`, Next.js + TypeScript.** What the user sees: pages (`src/app/`), components
 (`src/components/`), the API client (`src/lib/api/`), maps, the 3D seascape, charts, forms, styling, the CSP
