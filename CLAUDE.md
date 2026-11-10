@@ -109,7 +109,8 @@ Never close, restart or interrupt a pane unless the user asks, and never send in
   when a Next.js upgrade changes it. If `AGENTS.md` shows modified after a dev-server start, commit that
   rewrite with the work, as the block itself says, rather than reverting it.
 - Web needs Node 24 (`.nvmrc`), but a new shell gets the system Node 20, where vitest won't start. Switch
-  with nvm in the same command, since each command starts a fresh shell:
-  `source ~/.nvm/nvm.sh && nvm use >/dev/null && <npm/pnpm/npx command>`.
+  with nvm in the same command, since each command starts a fresh shell. Export `NVM_DIR` first: without
+  it `nvm use` claims v24 is not installed:
+  `export NVM_DIR="$HOME/.nvm"; source "$NVM_DIR/nvm.sh" && nvm use >/dev/null && <npm/pnpm/npx command>`.
 - Remotes: `origin` is the fork (`sam0910/*`), `upstream` is `opendiving/*`. PRs go to the fork's `main`
   and are squash-merged.
